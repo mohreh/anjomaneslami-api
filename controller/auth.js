@@ -1,10 +1,10 @@
-const crypto = require('crypto');
-const User = require('../models/User');
-const Member = require('../models/Member');
-const ErrorResponse = require('../utils/errorResponse');
-const sendEmail = require('../utils/sendEmail');
-const asyncHandler = require('../middleware/async');
-const data = require('../_data/data.json');
+const crypto = require("crypto");
+const User = require("../models/User");
+const Member = require("../models/Member");
+const ErrorResponse = require("../utils/errorResponse");
+const sendEmail = require("../utils/sendEmail");
+const asyncHandler = require("../middleware/async");
+// const data = require('../_data/data.json');
 
 // @desc      Register user
 // @route     POST /api/v1/auth/register
@@ -13,7 +13,7 @@ exports.register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role, number } = req.body;
 
   if (!number) {
-    return next(new ErrorResponse('Please add your studend number', 400))();
+    return next(new ErrorResponse("Please add your studend number", 400))();
   }
 
   const member = await Member.findOne({ number });
@@ -69,21 +69,21 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   // Validate email and password
   if (!email || !password) {
-    return next(new ErrorResponse('please provide an email and password', 400));
+    return next(new ErrorResponse("please provide an email and password", 400));
   }
 
   // Check user
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
-    return next(new ErrorResponse('Invalid credentials', 401));
+    return next(new ErrorResponse("Invalid credentials", 401));
   }
 
   // Check if password matches
   const isMatch = await user.matchPassword(password);
 
   if (!isMatch) {
-    return next(new ErrorResponse('Invalid credentials', 401));
+    return next(new ErrorResponse("Invalid credentials", 401));
   }
 
   sendTokenResponse(user, 200, res);
@@ -93,7 +93,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.logout = asyncHandler(async (req, res, next) => {
-  res.cookie('token', 'none', {
+  res.cookie("token", "none", {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
@@ -140,7 +140,7 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/updatepassword
 // @access    Private
 exports.updatePassword = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id).select('+password');
+  const user = await User.findById(req.user.id).select("+password");
 
   // Check current password
   if (!(await user.matchPassword(req.body.currentPassword))) {
@@ -171,7 +171,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   // Create reset url
   const resetUrl = `${req.protocol}://${req.get(
-    'host'
+    "host"
   )}/api/v1/auth/resetpassword/${resetToken}`;
 
   const message = `You are recieving this email couse you (or someone else) has requested the reset of a Password. Please make a put request to: \n\n ${resetUrl}`;
@@ -179,13 +179,13 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   try {
     await sendEmail({
       email: user.email,
-      subject: 'Password reset token',
+      subject: "Password reset token",
       message,
     });
 
     res.status(200).json({
       success: true,
-      data: 'Email Sent',
+      data: "Email Sent",
     });
   } catch (err) {
     console.error(err);
@@ -194,7 +194,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    return next(new ErrorResponse('Email could not be sent', 500));
+    return next(new ErrorResponse("Email could not be sent", 500));
   }
 
   res.status(200).json({
@@ -209,9 +209,9 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 exports.ressetPassword = asyncHandler(async (req, res, next) => {
   // Get Hashed Token
   const resetPasswordToken = crypto
-    .createHash('sha256')
+    .createHash("sha256")
     .update(req.params.resetToken)
-    .digest('hex');
+    .digest("hex");
 
   const user = await User.findOne({
     resetPasswordToken,
@@ -244,11 +244,11 @@ const sendTokenResponse = async (user, statusCode, res) => {
     httpOnly: true,
   };
 
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     option.secure = true;
   }
 
-  res.status(statusCode).cookie('token', token, option).json({
+  res.status(statusCode).cookie("token", token, option).json({
     success: true,
     token,
   });
