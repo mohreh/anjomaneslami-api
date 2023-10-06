@@ -22,8 +22,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     return next(
       new ErrorResponse(
         `There is no person with student number of ${number}`,
-        400
-      )
+        400,
+      ),
     );
   }
 
@@ -31,8 +31,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     return next(
       new ErrorResponse(
         `You haven't add your number in your membership form`,
-        400
-      )
+        400,
+      ),
     );
   }
 
@@ -55,7 +55,7 @@ exports.register = asyncHandler(async (req, res, next) => {
   await Member.findByIdAndUpdate(
     member._id,
     { register: true },
-    { runValidators: true }
+    { runValidators: true },
   );
 
   sendTokenResponse(user, 200, res);
@@ -94,7 +94,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.logout = asyncHandler(async (req, res, next) => {
   res.cookie("token", "none", {
-    expires: new Date(Date.now() + 10 * 1000),
+    expiresIn: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
 
@@ -171,7 +171,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   // Create reset url
   const resetUrl = `${req.protocol}://${req.get(
-    "host"
+    "host",
   )}/api/v1/auth/resetpassword/${resetToken}`;
 
   const message = `You are recieving this email couse you (or someone else) has requested the reset of a Password. Please make a put request to: \n\n ${resetUrl}`;
@@ -238,8 +238,8 @@ const sendTokenResponse = async (user, statusCode, res) => {
   const token = await user.getSingedJwtToken();
 
   const option = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+    expiresIn: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000,
     ),
     httpOnly: true,
   };
