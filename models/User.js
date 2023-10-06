@@ -65,9 +65,8 @@ UserSchema.pre("save", async function (next) {
 // Sing jwt and return
 UserSchema.methods.getSingedJwtToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: new Date(
+    expiresIn:
       Date.now() + process.env.JWT_COOKIE_EXPIRE * 30 * 24 * 60 * 60 * 1000,
-    ),
   });
 };
 
