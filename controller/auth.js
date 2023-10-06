@@ -239,7 +239,7 @@ const sendTokenResponse = async (user, statusCode, res) => {
 
   const option = {
     expiresIn: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000,
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 30 * 24 * 60 * 60 * 1000,
     ),
     httpOnly: true,
   };

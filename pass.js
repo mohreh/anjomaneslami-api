@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 let password = "";
 
@@ -16,5 +17,12 @@ const run = async () => {
   await gen();
   await comp();
 };
+const decode = async () => {
+  const dec = jwt.verify(
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MWRlNmI5MDU5M2UwYTAzYjA4NDc2MCIsImlhdCI6MTY5NjYwNTE2MCwiZXhwIjoxNjk2NjA1MTYwfQ.-1aW8L5I5xaApMUugwqmAtvWihpwzDwsRVuTLnxHNJk",
+    "secret",
+  );
+  console.log(dec);
+};
 
-run();
+decode();
